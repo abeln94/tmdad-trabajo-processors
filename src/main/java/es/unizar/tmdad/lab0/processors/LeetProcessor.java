@@ -29,7 +29,7 @@ public class LeetProcessor implements Processor {
                 .map(t -> leetionate(t))
                 .collect(Collectors.joining());
 
-        return Collections.singletonList(new TweetModified(tweet, newText));
+        return Collections.singletonList(TweetModified.modifyTweet(tweet, newText));
 
     }
 

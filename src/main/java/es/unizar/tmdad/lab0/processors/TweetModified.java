@@ -5,10 +5,10 @@ import org.springframework.social.twitter.api.Tweet;
 /**
  * Clase TweetModified
  */
-public class TweetModified extends Tweet {
+public class TweetModified {
 
-    public TweetModified(Tweet tweet, String newText) {
-        super(tweet.getId(), tweet.getIdStr(), newText, tweet.getCreatedAt(), tweet.getFromUser(), tweet.getProfileImageUrl(), tweet.getToUserId(), tweet.getFromUserId(), tweet.getLanguageCode(), tweet.getSource());
+    static public Tweet modifyTweet(Tweet tweet, String newText) {
+        return new Tweet(tweet.getId(), tweet.getIdStr(), newText, tweet.getCreatedAt(), tweet.getFromUser(), tweet.getProfileImageUrl(), tweet.getToUserId(), tweet.getFromUserId(), tweet.getLanguageCode(), tweet.getSource());
     }
 
 }

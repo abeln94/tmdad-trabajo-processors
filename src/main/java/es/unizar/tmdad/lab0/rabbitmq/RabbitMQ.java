@@ -3,7 +3,6 @@ package es.unizar.tmdad.lab0.rabbitmq;
 import es.unizar.tmdad.lab0.processors.Processor;
 import es.unizar.tmdad.lab0.processors.ProcessorsList;
 import es.unizar.tmdad.lab0.settings.Preferences;
-import javax.annotation.Resource;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -18,7 +17,7 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TweetInterface {
+public class RabbitMQ {
     
     static final String topicExchangeName = "tweets-exchange";
     @Bean
@@ -32,28 +31,56 @@ public class TweetInterface {
     static final String outputQueueName = "processedTweets-queue";
     static final String outputTopicName = "processedTweets-topic";
     
+    
+    static final String settingsQueueName = "settings-queue";
+    static final String settingsTopicName = "settings-topic";
+    
     @Bean
-    Queue queuePing(){
+    Queue queueTweets(){
         return new Queue(inputQueueName, false);
     }
-
+    
     @Bean
-    Binding bindingPing(TopicExchange exchange) {
-        return BindingBuilder.bind(queuePing()).to(exchange).with(inputTopicName);
+    Queue queueSettings(){
+        return new Queue(settingsQueueName, false);
     }
 
     @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
+    Binding bindingTweets(TopicExchange exchange) {
+        return BindingBuilder.bind(queueTweets()).to(exchange).with(inputTopicName);
+    }
+    
+    @Bean
+    Binding bindingSettings(TopicExchange exchange) {
+        return BindingBuilder.bind(queueSettings()).to(exchange).with(settingsTopicName);
+    }
+
+    @Bean
+    SimpleMessageListenerContainer tweetsContainer(ConnectionFactory connectionFactory) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(inputQueueName);
-        container.setMessageListener(listenerAdapter);
+        container.setMessageListener(tweetsListenerAdapter(this));
+        return container;
+    }
+    
+    @Bean
+    SimpleMessageListenerContainer settingsContainer(ConnectionFactory connectionFactory) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.setQueueNames(settingsQueueName);
+        container.setMessageListener(settingsListenerAdapter(this));
         return container;
     }
 
     @Bean
-    MessageListenerAdapter listenerAdapter(TweetInterface receiver) {
-        return new MessageListenerAdapter(receiver, "receiveMessage");
+    MessageListenerAdapter tweetsListenerAdapter(RabbitMQ receiver) {
+        return new MessageListenerAdapter(receiver, "receiveTweet");
+    }
+    
+    @Bean
+    MessageListenerAdapter settingsListenerAdapter(RabbitMQ receiver) {
+        return new MessageListenerAdapter(receiver, "receiveSettings");
     }
 
     
@@ -68,11 +95,11 @@ public class TweetInterface {
     @Autowired
     private Preferences preferences;
     
-    public TweetInterface(RabbitTemplate rabbitTemplate) {
+    public RabbitMQ(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void receiveMessage(Tweet tweet) {
+    public void receiveTweet(Tweet tweet) {
         preferences.increaseTweetsProcessed();
         Processor processor = processorsList.getByName(preferences.getProcessorName());
         for (Tweet tweetToSend : processor.parseTweet(tweet)) {
@@ -81,4 +108,10 @@ public class TweetInterface {
         System.out.println("Message received, converted and sent");
     }
 
+    public void receiveSettings(String settings){
+        String[] settings_split = settings.split("\n");
+        preferences.setProcessorName(settings_split[0]);
+        preferences.setProcessorLevel(Processor.level.valueOf(settings_split[1]));
+        System.out.println("Settings received");
+    }
 }

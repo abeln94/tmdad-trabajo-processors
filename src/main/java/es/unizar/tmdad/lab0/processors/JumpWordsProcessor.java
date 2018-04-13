@@ -23,7 +23,7 @@ public class JumpWordsProcessor implements Processor {
     public List<Tweet> parseTweet(Tweet tweet) {
         String originalText = tweet.getText();
 
-        return Collections.singletonList(new TweetModified(tweet, String.join("", dislexionate(originalText.split("\\b")))));
+        return Collections.singletonList(TweetModified.modifyTweet(tweet, String.join("", dislexionate(originalText.split("\\b")))));
 
     }
 

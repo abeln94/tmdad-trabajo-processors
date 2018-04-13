@@ -29,7 +29,7 @@ public class JumpLettersProcessor implements Processor {
                 .map(t -> dislexionate(t))
                 .collect(Collectors.joining());
 
-        return Collections.singletonList(new TweetModified(tweet, newText));
+        return Collections.singletonList(TweetModified.modifyTweet(tweet, newText));
     }
 
     private String dislexionate(String t) {
