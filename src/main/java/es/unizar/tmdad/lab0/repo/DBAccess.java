@@ -5,23 +5,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TweetAccess {
+public class DBAccess {
 
     @Autowired
-    private ConfigPRepository config;
+    private DBRepository config;
 
-    public ConfigProcessors getSettings() {
-        for (ConfigProcessors settings : config.findAll()) {
+    public DBTableRow getSettings() {
+        for (DBTableRow settings : config.findAll()) {
             return settings;
         }
 
-        ConfigProcessors data = new ConfigProcessors();
+        DBTableRow data = new DBTableRow();
         data.setName("disabled");
         data.setLevel(level.NONE.toString());
         return data;
     }
 
-    public void setSettings(ConfigProcessors settings) {
+    public void setSettings(DBTableRow settings) {
         config.deleteAll();
         config.save(settings);
     }

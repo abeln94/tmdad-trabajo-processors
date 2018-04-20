@@ -1,20 +1,20 @@
 package es.unizar.tmdad.lab0.settings;
 
-import es.unizar.tmdad.lab0.repo.ConfigProcessors;
-import es.unizar.tmdad.lab0.repo.TweetAccess;
+import es.unizar.tmdad.lab0.repo.DBTableRow;
+import es.unizar.tmdad.lab0.repo.DBAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 /**
- * Clase Preferences. Sustituir con base de datos externa o algo
+ * Clase Preferences. 
  */
 @Service
 public class Preferences {
 
     @Autowired
-    TweetAccess twac;
+    DBAccess twac;
 
     public enum level {
 
@@ -40,7 +40,7 @@ public class Preferences {
         this.processorName = processorName;
         this.processorLevel = processorLevel;
         
-        ConfigProcessors data = new ConfigProcessors();
+        DBTableRow data = new DBTableRow();
         data.setName(processorName);
         data.setLevel(processorLevel);
         twac.setSettings(data);
@@ -59,7 +59,7 @@ public class Preferences {
     //loader
     @EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
-        ConfigProcessors settings = twac.getSettings();
+        DBTableRow settings = twac.getSettings();
         this.processorName = settings.getName();
         this.processorLevel = settings.getLevel();
         System.out.println("Loaded preferences");

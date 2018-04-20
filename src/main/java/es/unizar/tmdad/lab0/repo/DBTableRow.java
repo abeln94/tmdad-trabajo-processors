@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "processorconf", schema = "public")
-public class ConfigProcessors {
+public class DBTableRow {
 
     private String name;
     private String level;
