@@ -1,7 +1,10 @@
 package es.unizar.tmdad.lab0.settings;
 
-import es.unizar.tmdad.lab0.processors.Processor;
-import java.util.HashMap;
+import es.unizar.tmdad.lab0.repo.ConfigProcessors;
+import es.unizar.tmdad.lab0.repo.TweetAccess;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,39 +13,55 @@ import org.springframework.stereotype.Service;
 @Service
 public class Preferences {
 
-    private static final String PROCESSOR_NAME = "processor_name";
-    private static final String PROCESSOR_NAME_DEFAULT = "disabled";
-    private static final String PROCESSOR_LEVEL = "processor_level";
-    private static final String PROCESSOR_LEVEL_DEFAULT = Processor.level.NONE.toString();
+    @Autowired
+    TweetAccess twac;
 
-    private final HashMap<String, String> preferences = new HashMap<>();
+    public enum level {
+
+        NONE, LOW, MEDIUM, HIGH,
+    };
+
+    private String processorName;
+    private String processorLevel;
 
     public String getProcessorName() {
-        return preferences.getOrDefault(PROCESSOR_NAME, PROCESSOR_NAME_DEFAULT);
+        return processorName;
     }
 
-    public void setProcessorName(String name) {
-        preferences.put(PROCESSOR_NAME, name);
-    }
-
-    public Processor.level getProcessorLevel() {
+    public level getProcessorLevel() {
         try {
-            return Processor.level.valueOf(preferences.getOrDefault(PROCESSOR_LEVEL, PROCESSOR_LEVEL_DEFAULT));
+            return level.valueOf(processorLevel);
         } catch (IllegalArgumentException e) {
-            return Processor.level.NONE;
+            return level.NONE;
         }
     }
 
-    public void setProcessorLevel(Processor.level level) {
-        preferences.put(PROCESSOR_LEVEL, level.toString());
+    public void setConfiguration(String processorName, String processorLevel) {
+        this.processorName = processorName;
+        this.processorLevel = processorLevel;
+        
+        ConfigProcessors data = new ConfigProcessors();
+        data.setName(processorName);
+        data.setLevel(processorLevel);
+        twac.setSettings(data);
     }
-    
-    
+
     private int tweetsProcessed = 0;
-    public void increaseTweetsProcessed(){
+
+    public void increaseTweetsProcessed() {
         tweetsProcessed++;
     }
-    public int getTweetsProcessed(){
+
+    public int getTweetsProcessed() {
         return tweetsProcessed;
+    }
+
+    //loader
+    @EventListener
+    public void handleContextRefresh(ContextRefreshedEvent event) {
+        ConfigProcessors settings = twac.getSettings();
+        this.processorName = settings.getName();
+        this.processorLevel = settings.getLevel();
+        System.out.println("Loaded preferences");
     }
 }

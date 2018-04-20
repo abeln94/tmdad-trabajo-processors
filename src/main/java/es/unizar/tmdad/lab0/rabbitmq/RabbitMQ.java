@@ -18,30 +18,30 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RabbitMQ {
-    
+
     static final String topicExchangeName = "tweets-exchange";
+
     @Bean
     TopicExchange exchange() {
         return new TopicExchange(topicExchangeName);
     }
-    
+
     static final String inputQueueName = "rawTweets-queue";
     static final String inputTopicName = "rawTweets-topic";
-    
+
     static final String outputQueueName = "processedTweets-queue";
     static final String outputTopicName = "processedTweets-topic";
-    
-    
+
     static final String settingsQueueName = "settings-queue";
     static final String settingsTopicName = "settings-topic";
-    
+
     @Bean
-    Queue queueTweets(){
+    Queue queueTweets() {
         return new Queue(inputQueueName, false);
     }
-    
+
     @Bean
-    Queue queueSettings(){
+    Queue queueSettings() {
         return new Queue(settingsQueueName, false);
     }
 
@@ -49,7 +49,7 @@ public class RabbitMQ {
     Binding bindingTweets(TopicExchange exchange) {
         return BindingBuilder.bind(queueTweets()).to(exchange).with(inputTopicName);
     }
-    
+
     @Bean
     Binding bindingSettings(TopicExchange exchange) {
         return BindingBuilder.bind(queueSettings()).to(exchange).with(settingsTopicName);
@@ -63,7 +63,7 @@ public class RabbitMQ {
         container.setMessageListener(tweetsListenerAdapter(this));
         return container;
     }
-    
+
     @Bean
     SimpleMessageListenerContainer settingsContainer(ConnectionFactory connectionFactory) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
@@ -77,24 +77,20 @@ public class RabbitMQ {
     MessageListenerAdapter tweetsListenerAdapter(RabbitMQ receiver) {
         return new MessageListenerAdapter(receiver, "receiveTweet");
     }
-    
+
     @Bean
     MessageListenerAdapter settingsListenerAdapter(RabbitMQ receiver) {
         return new MessageListenerAdapter(receiver, "receiveSettings");
     }
 
-    
-    
-    
-    
     private final RabbitTemplate rabbitTemplate;
-    
+
     @Autowired
     private ProcessorsList processorsList;
-    
+
     @Autowired
     private Preferences preferences;
-    
+
     public RabbitMQ(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
@@ -108,10 +104,9 @@ public class RabbitMQ {
         System.out.println("Message received, converted and sent");
     }
 
-    public void receiveSettings(String settings){
+    public void receiveSettings(String settings) {
         String[] settings_split = settings.split("\n");
-        preferences.setProcessorName(settings_split[0]);
-        preferences.setProcessorLevel(Processor.level.valueOf(settings_split[1]));
+        preferences.setConfiguration(settings_split[0], settings_split[1]);
         System.out.println("Settings received");
     }
 }
