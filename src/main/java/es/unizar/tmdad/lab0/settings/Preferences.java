@@ -62,6 +62,6 @@ public class Preferences {
         DBTableRow settings = twac.getSettings();
         this.processorName = settings.getName();
         this.processorLevel = settings.getLevel();
-        System.out.println("Loaded preferences");
+        System.out.println("Loaded preferences {"+processorName+";"+processorLevel);
     }
 }

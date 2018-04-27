@@ -17,7 +17,7 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RabbitMQ {
+public class RabbitMQEndpoint {
 
     static final String topicExchangeName = "tweets-exchange";
 
@@ -74,12 +74,12 @@ public class RabbitMQ {
     }
 
     @Bean
-    MessageListenerAdapter tweetsListenerAdapter(RabbitMQ receiver) {
+    MessageListenerAdapter tweetsListenerAdapter(RabbitMQEndpoint receiver) {
         return new MessageListenerAdapter(receiver, "receiveTweet");
     }
 
     @Bean
-    MessageListenerAdapter settingsListenerAdapter(RabbitMQ receiver) {
+    MessageListenerAdapter settingsListenerAdapter(RabbitMQEndpoint receiver) {
         return new MessageListenerAdapter(receiver, "receiveSettings");
     }
 
@@ -91,7 +91,7 @@ public class RabbitMQ {
     @Autowired
     private Preferences preferences;
 
-    public RabbitMQ(RabbitTemplate rabbitTemplate) {
+    public RabbitMQEndpoint(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
