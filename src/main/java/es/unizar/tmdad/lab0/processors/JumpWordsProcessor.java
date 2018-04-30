@@ -25,17 +25,15 @@ public class JumpWordsProcessor implements Processor {
     public List<Tweet> parseTweet(Tweet tweet) {
         String originalText = tweet.getText();
 
-        return Collections.singletonList(TweetModified.modifyTweet(tweet, String.join("", dislexionate(originalText.split("\\b")))));
+        return Collections.singletonList(TweetModified.modifyTweet(tweet, String.join(" ", dislexionate(originalText.split(" ")))));
 
     }
 
     private String[] dislexionate(String[] words) {
 
-        if (words.length == 0) {
+        if (words.length <= 1) {
             return words;
         }
-
-        int offset = words[0].matches("\\w") ? 0 : 1;
 
         int repeat;
 
@@ -55,8 +53,8 @@ public class JumpWordsProcessor implements Processor {
         }
 
         for (int i = 0; i < repeat; i++) {
-            int a = random.nextInt((words.length + 1) / 2) + offset;
-            int b = random.nextInt((words.length + 1) / 2) + offset;
+            int a = random.nextInt(words.length);
+            int b = random.nextInt(words.length);
 
             String temp = words[a];
             words[a] = words[b];
