@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  * Clase JumpLettersProcessor
  */
 @Service
+@Profile("jumpLetters")
 public class JumpLettersProcessor implements Processor {
 
     @Autowired

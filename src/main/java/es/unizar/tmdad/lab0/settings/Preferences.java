@@ -1,10 +1,12 @@
 package es.unizar.tmdad.lab0.settings;
 
-import es.unizar.tmdad.lab0.repo.DBTableRow;
 import es.unizar.tmdad.lab0.repo.DBAccess;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,6 +14,20 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class Preferences {
+    
+    
+    String profile_name;
+    
+    public String getProfileName(){
+        return profile_name;
+    }
+    
+    
+    Preferences(@Value("${SPRING_PROFILES_ACTIVE}") String profileName){
+        profile_name = profileName;
+    }
+    
+    
 
     @Autowired
     DBAccess twac;
@@ -21,12 +37,7 @@ public class Preferences {
         NONE, LOW, MEDIUM, HIGH,
     };
 
-    private String processorName;
     private String processorLevel;
-
-    public String getProcessorName() {
-        return processorName;
-    }
 
     public level getProcessorLevel() {
         try {
@@ -36,14 +47,9 @@ public class Preferences {
         }
     }
 
-    public void setConfiguration(String processorName, String processorLevel) {
-        this.processorName = processorName;
+    public void setConfiguration(String processorLevel) {
         this.processorLevel = processorLevel;
-        
-        DBTableRow data = new DBTableRow();
-        data.setName(processorName);
-        data.setLevel(processorLevel);
-        twac.setSettings(data);
+        twac.setSettings(profile_name, processorLevel);
     }
 
     private int tweetsProcessed = 0;
@@ -59,9 +65,10 @@ public class Preferences {
     //loader
     @EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
-        DBTableRow settings = twac.getSettings();
-        this.processorName = settings.getName();
-        this.processorLevel = settings.getLevel();
-        System.out.println("Loaded preferences {"+processorName+";"+processorLevel);
+        processorLevel = twac.getSettings(profile_name);
+        if(processorLevel==null){
+            processorLevel = level.NONE.toString();
+        }
+        System.out.println("Loaded preferences LEVEL="+this.processorLevel);
     }
 }

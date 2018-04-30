@@ -16,8 +16,8 @@ public class SearchController {
     @ResponseBody
     public String greeting() {
         return new StringBuilder()
+                .append(preferences.getProfileName()).append(" --- ")
                 .append("Current config { ")
-                .append("ProcessorName=").append(preferences.getProcessorName()).append(" ; ")
                 .append("ProcesorLevel=").append(preferences.getProcessorLevel().toString()).append(" ; ")
                 .append(" }")
                 .append("TweetsProcessed=").append(preferences.getTweetsProcessed())

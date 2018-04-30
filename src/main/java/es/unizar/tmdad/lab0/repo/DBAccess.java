@@ -10,19 +10,19 @@ public class DBAccess {
     @Autowired
     private DBRepository config;
 
-    public DBTableRow getSettings() {
+    public String getSettings(String key) {
         for (DBTableRow settings : config.findAll()) {
-            return settings;
+            if (settings.getName().equals(key)){
+                return settings.getLevel();
+            }
         }
-
-        DBTableRow data = new DBTableRow();
-        data.setName("disabled");
-        data.setLevel(level.NONE.toString());
-        return data;
+        return null;
     }
 
-    public void setSettings(DBTableRow settings) {
-        config.deleteAll();
-        config.save(settings);
+    public void setSettings(String key, String value) {
+        DBTableRow row = new DBTableRow();
+        row.setName(key);
+        row.setLevel(value);
+        config.save(row);
     }
 }
