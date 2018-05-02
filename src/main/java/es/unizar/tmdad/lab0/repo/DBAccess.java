@@ -12,8 +12,8 @@ public class DBAccess {
 
     public String getSettings(String key) {
         for (DBTableRow settings : config.findAll()) {
-            if (settings.getName().equals(key)){
-                return settings.getLevel();
+            if (settings.getKey().equals(key)){
+                return settings.getValue();
             }
         }
         return null;
@@ -21,7 +21,7 @@ public class DBAccess {
 
     public void setSettings(String key, String value) {
         DBTableRow row = new DBTableRow();
-        row.setName(key);
+        row.setKey(key);
         row.setLevel(value);
         config.save(row);
     }
