@@ -22,7 +22,7 @@ public class DBAccess {
     public void setSettings(String key, String value) {
         DBTableRow row = new DBTableRow();
         row.setKey(key);
-        row.setLevel(value);
+        row.setValue(value);
         config.save(row);
     }
 }
