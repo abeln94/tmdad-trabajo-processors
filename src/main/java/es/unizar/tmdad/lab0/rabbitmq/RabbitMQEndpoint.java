@@ -2,7 +2,6 @@ package es.unizar.tmdad.lab0.rabbitmq;
 
 import es.unizar.tmdad.lab0.processors.Processor;
 import es.unizar.tmdad.lab0.settings.Preferences;
-import javax.annotation.PostConstruct;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -12,15 +11,38 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
+/**
+ * Endpoint of RabbitMQ
+ * - Configures exchanges, topics and queues.
+ * - Receives messages from subscribed queues
+ * - Sends messages to topics
+ */
 @Component
 public class RabbitMQEndpoint {
 
-    //define exchanges
+    private final RabbitTemplate rabbitTemplate;
+
+    public RabbitMQEndpoint(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
+    /**
+     * Get and set configuration
+     */
+    @Autowired
+    private Preferences pref;
+
+    /**
+     * Use active processor
+     */
+    @Autowired
+    Processor processor;
+
+    //-------------exchanges-----------------
     static final String tweetsExchangeName = "tweets-exchange";
     static final String settingsExchangeName = "settings-exchange";
 
@@ -34,7 +56,7 @@ public class RabbitMQEndpoint {
         return new TopicExchange(settingsExchangeName);
     }
 
-    //define queues
+    //-----------------queues-----------------
     static String inputQueueNamePrefix = "rawTweets-queue.";
 
     static String outputQueueName = "processedTweets-queue";
@@ -51,14 +73,14 @@ public class RabbitMQEndpoint {
         return new Queue(settingsQueueNamePrefix + pref.getProfileName(), false);
     }
 
-    //define topics
+    //-----------------topics-----------------
     static String inputTopicNamePrefix = "rawTweets-topic.";
 
     static String outputTopicName = "processedTweets-topic";
 
     static String settingsTopicNamePrefix = "settings-topic.";
 
-    //define bindings
+    //-----------------bindings-----------------
     @Bean
     Binding bindingTweets() {
         return BindingBuilder.bind(queueTweets()).to(tweetsExchange()).with(inputTopicNamePrefix + pref.getProfileName());
@@ -69,7 +91,7 @@ public class RabbitMQEndpoint {
         return BindingBuilder.bind(queueSettings()).to(settingsExchange()).with(settingsTopicNamePrefix + pref.getProfileName());
     }
 
-    //define redirections
+    //-----------------redirections-----------------
     @Bean
     SimpleMessageListenerContainer tweetsContainer(ConnectionFactory connectionFactory) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
@@ -88,7 +110,7 @@ public class RabbitMQEndpoint {
         return container;
     }
 
-    //define adapters
+    //-----------------adapters-----------------
     @Bean
     MessageListenerAdapter tweetsListenerAdapter(RabbitMQEndpoint receiver) {
         return new MessageListenerAdapter(receiver, "receiveTweet");
@@ -99,19 +121,7 @@ public class RabbitMQEndpoint {
         return new MessageListenerAdapter(receiver, "receiveSettings");
     }
 
-    private final RabbitTemplate rabbitTemplate;
-
-    public RabbitMQEndpoint(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
-
-    @Autowired
-    private Preferences pref;
-
-    @Autowired
-    Processor processor;
-
-    //listeners
+    //-----------------listeners-----------------
     public void receiveTweet(Tweet tweet) {
         pref.increaseTweetsProcessed();
         for (Tweet tweetToSend : processor.parseTweet(tweet)) {

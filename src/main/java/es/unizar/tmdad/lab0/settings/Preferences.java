@@ -3,35 +3,36 @@ package es.unizar.tmdad.lab0.settings;
 import es.unizar.tmdad.lab0.repo.DBAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 /**
- * Clase Preferences. 
+ * Keeps the preferences of the application
+ * - Getters to retrieve
+ * - Setters to save
  */
 @Service
 public class Preferences {
-    
-    
-    String profile_name;
-    
-    public String getProfileName(){
-        return profile_name;
-    }
-    
-    
-    Preferences(@Value("${SPRING_PROFILES_ACTIVE}") String profileName){
-        profile_name = profileName;
-    }
-    
-    
 
+    /**
+     * Saves and gets settings from database
+     */
     @Autowired
     DBAccess twac;
 
+    //-----------------profile name--------------
+    String profile_name;
+
+    Preferences(@Value("${SPRING_PROFILES_ACTIVE}") String profileName) {
+        profile_name = profileName;
+    }
+
+    public String getProfileName() {
+        return profile_name;
+    }
+
+    //-----------------level---------------
     public enum level {
 
         NONE, LOW, MEDIUM, HIGH,
@@ -52,6 +53,7 @@ public class Preferences {
         twac.setSettings(profile_name, processorLevel);
     }
 
+    //----------------tweets processed----------------
     private int tweetsProcessed = 0;
 
     public void increaseTweetsProcessed() {
@@ -62,13 +64,13 @@ public class Preferences {
         return tweetsProcessed;
     }
 
-    //loader
+    //------------startup loader---------------
     @EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
         processorLevel = twac.getSettings(profile_name);
-        if(processorLevel==null){
+        if (processorLevel == null) {
             processorLevel = level.NONE.toString();
         }
-        System.out.println("Loaded preferences LEVEL="+this.processorLevel);
+        System.out.println("Loaded preferences LEVEL=" + this.processorLevel);
     }
 }

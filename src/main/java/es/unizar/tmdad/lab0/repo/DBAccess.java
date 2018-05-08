@@ -1,9 +1,13 @@
 package es.unizar.tmdad.lab0.repo;
 
-import es.unizar.tmdad.lab0.settings.Preferences.level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Acces to database
+ * - Retrieves data
+ * - Saves data
+ */
 @Service
 public class DBAccess {
 
@@ -12,7 +16,7 @@ public class DBAccess {
 
     public String getSettings(String key) {
         for (DBTableRow settings : config.findAll()) {
-            if (settings.getName().equals(key)){
+            if (settings.getName().equals(key)) {
                 return settings.getLevel();
             }
         }

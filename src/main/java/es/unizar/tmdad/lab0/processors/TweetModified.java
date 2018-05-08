@@ -3,7 +3,7 @@ package es.unizar.tmdad.lab0.processors;
 import org.springframework.social.twitter.api.Tweet;
 
 /**
- * Clase TweetModified
+ * Allows changing a tweet's text (by creating another tweet)
  */
 public class TweetModified {
 

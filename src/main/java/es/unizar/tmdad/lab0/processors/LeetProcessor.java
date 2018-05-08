@@ -12,12 +12,16 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Service;
 
 /**
- * Clase LeetProcessor
+ * Leet Processor
+ * - Converts some letters to l33t equivalent
  */
 @Service
 @Profile("leet")
 public class LeetProcessor implements Processor {
 
+    /**
+     * Retrieves preferences
+     */
     @Autowired
     private Preferences preferences;
 

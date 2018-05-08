@@ -10,12 +10,16 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Service;
 
 /**
- * Clase JumpLettersProcessor
+ * JumpWords Processor
+ * - Swap words
  */
 @Service
 @Profile("jumpWords")
 public class JumpWordsProcessor implements Processor {
 
+    /**
+     * Retrieves preferences
+     */
     @Autowired
     private Preferences preferences;
 

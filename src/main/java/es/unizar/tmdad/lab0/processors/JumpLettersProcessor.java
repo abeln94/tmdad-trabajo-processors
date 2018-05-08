@@ -12,12 +12,16 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Service;
 
 /**
- * Clase JumpLettersProcessor
+ * JumpLetters Processor
+ * - Swap random letters on each word
  */
 @Service
 @Profile("jumpLetters")
 public class JumpLettersProcessor implements Processor {
 
+    /**
+     * Retrieves preferences
+     */
     @Autowired
     private Preferences preferences;
 
