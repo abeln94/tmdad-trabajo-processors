@@ -21,7 +21,7 @@ public class JumpWordsProcessor implements Processor {
      * Retrieves preferences
      */
     @Autowired
-    private Preferences preferences;
+    private Preferences prefs;
 
     private final Random random = new Random();
 
@@ -29,11 +29,11 @@ public class JumpWordsProcessor implements Processor {
     public List<Tweet> parseTweet(Tweet tweet) {
         String originalText = tweet.getText();
 
-        return Collections.singletonList(TweetModified.modifyTweet(tweet, String.join(" ", dislexionate(originalText.split(" ")))));
+        return Collections.singletonList(TweetModified.modifyTweet(tweet, String.join(" ", dislexionateSentence(originalText.split(" ")))));
 
     }
 
-    private String[] dislexionate(String[] words) {
+    private String[] dislexionateSentence(String[] words) {
 
         if (words.length <= 1) {
             return words;
@@ -41,7 +41,7 @@ public class JumpWordsProcessor implements Processor {
 
         int repeat;
 
-        switch (preferences.getProcessorLevel()) {
+        switch (prefs.getProcessorLevel()) {
             case LOW:
                 repeat = 1;
                 break;

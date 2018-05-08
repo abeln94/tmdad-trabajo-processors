@@ -1,4 +1,4 @@
-package es.unizar.tmdad.lab0.controller;
+package es.unizar.tmdad.lab0.dashboard;
 
 import es.unizar.tmdad.lab0.settings.Preferences;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,17 @@ public class SearchController {
      * Retrieves preferences
      */
     @Autowired
-    private Preferences preferences;
+    private Preferences prefs;
 
     @RequestMapping("/")
     @ResponseBody
-    public String greeting() {
+    public String main() {
         return new StringBuilder()
-                .append(preferences.getProfileName()).append(" --- ")
+                .append(prefs.getProfileName()).append(" --- ")
                 .append("Current config { ")
-                .append("ProcesorLevel=").append(preferences.getProcessorLevel().toString()).append(" ; ")
+                .append("ProcesorLevel=").append(prefs.getProcessorLevel().toString()).append(" ; ")
                 .append(" }")
-                .append("TweetsProcessed=").append(preferences.getTweetsProcessed())
+                .append("TweetsProcessed=").append(prefs.getTweetsProcessed())
                 .toString();
     }
 

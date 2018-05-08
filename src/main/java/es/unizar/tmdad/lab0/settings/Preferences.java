@@ -19,7 +19,7 @@ public class Preferences {
      * Saves and gets settings from database
      */
     @Autowired
-    DBAccess twac;
+    DBAccess database;
 
     //-----------------profile name--------------
     String profile_name;
@@ -48,9 +48,9 @@ public class Preferences {
         }
     }
 
-    public void setConfiguration(String processorLevel) {
+    public void setProcessorLevel(String processorLevel) {
         this.processorLevel = processorLevel;
-        twac.setSettings(profile_name, processorLevel);
+        database.setSettings(profile_name, processorLevel);
     }
 
     //----------------tweets processed----------------
@@ -67,7 +67,7 @@ public class Preferences {
     //------------startup loader---------------
     @EventListener
     public void handleContextRefresh(ContextRefreshedEvent event) {
-        processorLevel = twac.getSettings(profile_name);
+        processorLevel = database.getSettings(profile_name);
         if (processorLevel == null) {
             processorLevel = level.NONE.toString();
         }

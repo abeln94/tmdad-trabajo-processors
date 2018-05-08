@@ -23,7 +23,7 @@ public class JumpLettersProcessor implements Processor {
      * Retrieves preferences
      */
     @Autowired
-    private Preferences preferences;
+    private Preferences prefs;
 
     private final Random random = new Random();
 
@@ -32,13 +32,13 @@ public class JumpLettersProcessor implements Processor {
         String originalText = tweet.getText();
 
         String newText = Pattern.compile("\\b").splitAsStream(originalText)
-                .map(t -> dislexionate(t))
+                .map(t -> dislexionateWord(t))
                 .collect(Collectors.joining());
 
         return Collections.singletonList(TweetModified.modifyTweet(tweet, newText));
     }
 
-    private String dislexionate(String t) {
+    private String dislexionateWord(String t) {
         if (t.length() <= 2) {
             return t;
         }
@@ -47,7 +47,7 @@ public class JumpLettersProcessor implements Processor {
 
         int repeat;
 
-        switch (preferences.getProcessorLevel()) {
+        switch (prefs.getProcessorLevel()) {
             case LOW:
                 repeat = 1;
                 break;

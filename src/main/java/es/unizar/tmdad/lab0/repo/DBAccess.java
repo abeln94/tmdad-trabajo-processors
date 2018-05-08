@@ -11,11 +11,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class DBAccess {
 
+    /**
+     * Settings repository
+     */
     @Autowired
-    private DBRepository config;
+    private DBRepository repoSettings;
 
     public String getSettings(String key) {
-        for (DBTableRow settings : config.findAll()) {
+        for (DBTableRow settings : repoSettings.findAll()) {
             if (settings.getName().equals(key)) {
                 return settings.getLevel();
             }
@@ -27,6 +30,6 @@ public class DBAccess {
         DBTableRow row = new DBTableRow();
         row.setName(key);
         row.setLevel(value);
-        config.save(row);
+        repoSettings.save(row);
     }
 }

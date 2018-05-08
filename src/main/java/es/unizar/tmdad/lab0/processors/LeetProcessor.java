@@ -23,7 +23,7 @@ public class LeetProcessor implements Processor {
      * Retrieves preferences
      */
     @Autowired
-    private Preferences preferences;
+    private Preferences prefs;
 
     private final Random random = new Random();
 
@@ -49,7 +49,7 @@ public class LeetProcessor implements Processor {
 
         int c;
 
-        switch (preferences.getProcessorLevel()) {
+        switch (prefs.getProcessorLevel()) {
             case LOW:
                 c = random.nextInt(chars.length);
                 chars[c] = convertChar(chars[c]);

@@ -1,4 +1,4 @@
-package es.unizar.tmdad.lab0.rabbitmq;
+package es.unizar.tmdad.lab0.endpoints;
 
 import es.unizar.tmdad.lab0.processors.Processor;
 import es.unizar.tmdad.lab0.settings.Preferences;
@@ -34,7 +34,7 @@ public class RabbitMQEndpoint {
      * Get and set configuration
      */
     @Autowired
-    private Preferences pref;
+    private Preferences prefs;
 
     /**
      * Use active processor
@@ -64,13 +64,13 @@ public class RabbitMQEndpoint {
     static String settingsQueueNamePrefix = "settings-queue.";
 
     @Bean
-    Queue queueTweets() {
-        return new Queue(inputQueueNamePrefix + pref.getProfileName(), false);
+    Queue tweetsQueue() {
+        return new Queue(inputQueueNamePrefix + prefs.getProfileName(), false);
     }
 
     @Bean
-    Queue queueSettings() {
-        return new Queue(settingsQueueNamePrefix + pref.getProfileName(), false);
+    Queue settingsQueue() {
+        return new Queue(settingsQueueNamePrefix + prefs.getProfileName(), false);
     }
 
     //-----------------topics-----------------
@@ -82,13 +82,13 @@ public class RabbitMQEndpoint {
 
     //-----------------bindings-----------------
     @Bean
-    Binding bindingTweets() {
-        return BindingBuilder.bind(queueTweets()).to(tweetsExchange()).with(inputTopicNamePrefix + pref.getProfileName());
+    Binding tweetsBinding() {
+        return BindingBuilder.bind(tweetsQueue()).to(tweetsExchange()).with(inputTopicNamePrefix + prefs.getProfileName());
     }
 
     @Bean
-    Binding bindingSettings() {
-        return BindingBuilder.bind(queueSettings()).to(settingsExchange()).with(settingsTopicNamePrefix + pref.getProfileName());
+    Binding settingsBinding() {
+        return BindingBuilder.bind(settingsQueue()).to(settingsExchange()).with(settingsTopicNamePrefix + prefs.getProfileName());
     }
 
     //-----------------redirections-----------------
@@ -96,7 +96,7 @@ public class RabbitMQEndpoint {
     SimpleMessageListenerContainer tweetsContainer(ConnectionFactory connectionFactory) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.setQueues(queueTweets());
+        container.setQueues(tweetsQueue());
         container.setMessageListener(tweetsListenerAdapter(this));
         return container;
     }
@@ -105,7 +105,7 @@ public class RabbitMQEndpoint {
     SimpleMessageListenerContainer settingsContainer(ConnectionFactory connectionFactory) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.setQueues(queueSettings());
+        container.setQueues(settingsQueue());
         container.setMessageListener(settingsListenerAdapter(this));
         return container;
     }
@@ -123,7 +123,7 @@ public class RabbitMQEndpoint {
 
     //-----------------listeners-----------------
     public void receiveTweet(Tweet tweet) {
-        pref.increaseTweetsProcessed();
+        prefs.increaseTweetsProcessed();
         for (Tweet tweetToSend : processor.parseTweet(tweet)) {
             rabbitTemplate.convertAndSend(tweetsExchangeName, outputTopicName, tweetToSend);
         }
@@ -132,7 +132,7 @@ public class RabbitMQEndpoint {
     }
 
     public void receiveSettings(String settings) {
-        pref.setConfiguration(settings);
+        prefs.setProcessorLevel(settings);
         System.out.println("Settings received: " + settings);
     }
 }
