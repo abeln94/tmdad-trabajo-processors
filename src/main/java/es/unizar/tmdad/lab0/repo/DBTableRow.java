@@ -6,28 +6,28 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "processorconf", schema = "public")
+@Table(name = "configuration", schema = "public")
 public class DBTableRow {
 
-    private String name;
-    private String level;
+    private String key;
+    private String value;
 
     @Id
-    @Column(name = "name")
-    public String getName() {
-        return name;
+    @Column(name = "key")
+    public String getKey() {
+        return key;
     }
 
-    @Column(name = "level")
-    public String getLevel() {
-        return level;
+    @Column(name = "value")
+    public String getValue() {
+        return value;
     }
 
-    public void setName(String pName) {
-        name = pName;
+    public void setKey(String pKey) {
+        key = pKey;
     }
 
-    public void setLevel(String pLevel) {
-        level = pLevel;
+    public void setValue(String pValue) {
+        value = pValue;
     }
 }
