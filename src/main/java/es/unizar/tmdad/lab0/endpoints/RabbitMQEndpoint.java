@@ -24,11 +24,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMQEndpoint {
 
-    private final RabbitTemplate rabbitTemplate;
-
-    public RabbitMQEndpoint(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * Get and set configuration
@@ -97,7 +94,7 @@ public class RabbitMQEndpoint {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueues(tweetsQueue());
-        container.setMessageListener(tweetsListenerAdapter(this));
+        container.setMessageListener(tweetsListenerAdapter());
         return container;
     }
 
@@ -106,19 +103,19 @@ public class RabbitMQEndpoint {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueues(settingsQueue());
-        container.setMessageListener(settingsListenerAdapter(this));
+        container.setMessageListener(settingsListenerAdapter());
         return container;
     }
 
     //-----------------adapters-----------------
     @Bean
-    MessageListenerAdapter tweetsListenerAdapter(RabbitMQEndpoint receiver) {
-        return new MessageListenerAdapter(receiver, "receiveTweet");
+    MessageListenerAdapter tweetsListenerAdapter() {
+        return new MessageListenerAdapter(this, "receiveTweet");
     }
 
     @Bean
-    MessageListenerAdapter settingsListenerAdapter(RabbitMQEndpoint receiver) {
-        return new MessageListenerAdapter(receiver, "receiveSettings");
+    MessageListenerAdapter settingsListenerAdapter() {
+        return new MessageListenerAdapter(this, "receiveSettings");
     }
 
     //-----------------listeners-----------------

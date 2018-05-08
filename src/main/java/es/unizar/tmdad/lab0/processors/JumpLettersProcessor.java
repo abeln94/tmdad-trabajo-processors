@@ -1,12 +1,9 @@
 package es.unizar.tmdad.lab0.processors;
 
-import es.unizar.tmdad.lab0.settings.Preferences;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Service;
@@ -17,15 +14,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Profile("jumpLetters")
-public class JumpLettersProcessor implements Processor {
-
-    /**
-     * Retrieves preferences
-     */
-    @Autowired
-    private Preferences prefs;
-
-    private final Random random = new Random();
+public class JumpLettersProcessor extends Processor {
 
     @Override
     public List<Tweet> parseTweet(Tweet tweet) {
@@ -35,7 +24,7 @@ public class JumpLettersProcessor implements Processor {
                 .map(t -> dislexionateWord(t))
                 .collect(Collectors.joining());
 
-        return Collections.singletonList(TweetModified.modifyTweet(tweet, newText));
+        return Collections.singletonList(modifyTweet(tweet, newText));
     }
 
     private String dislexionateWord(String t) {
