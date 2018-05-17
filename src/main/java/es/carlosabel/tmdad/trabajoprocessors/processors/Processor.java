@@ -1,6 +1,6 @@
-package es.unizar.tmdad.lab0.processors;
+package es.carlosabel.tmdad.trabajoprocessors.processors;
 
-import es.unizar.tmdad.lab0.settings.Preferences;
+import es.carlosabel.tmdad.trabajoprocessors.settings.Preferences;
 import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;

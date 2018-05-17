@@ -1,6 +1,6 @@
-package es.unizar.tmdad.lab0.dashboard;
+package es.carlosabel.tmdad.trabajoprocessors.dashboard;
 
-import es.unizar.tmdad.lab0.settings.Preferences;
+import es.carlosabel.tmdad.trabajoprocessors.settings.Preferences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

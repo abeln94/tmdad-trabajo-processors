@@ -1,4 +1,4 @@
-package es.unizar.tmdad.lab0.repo;
+package es.carlosabel.tmdad.trabajoprocessors.repo;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

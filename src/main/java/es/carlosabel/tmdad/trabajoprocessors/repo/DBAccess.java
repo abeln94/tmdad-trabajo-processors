@@ -1,4 +1,4 @@
-package es.unizar.tmdad.lab0.repo;
+package es.carlosabel.tmdad.trabajoprocessors.repo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
