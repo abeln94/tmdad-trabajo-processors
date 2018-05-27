@@ -1,6 +1,7 @@
 package es.carlosabel.tmdad.trabajoprocessors.repo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
  * - Saves data
  */
 @Service
+@RefreshScope
 public class DBAccess {
 
     /**

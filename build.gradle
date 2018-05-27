@@ -38,6 +38,11 @@ dependencies {
     //compile group: 'org.postgresql', name: 'postgresql', version: '9.4-1201-jdbc4'
     runtime 'org.postgresql:postgresql:42.2.1'
 
+    //dynamic configuration
+    compile("org.springframework.cloud:spring-cloud-starter-config:1.4.3.RELEASE")
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-web')
+
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
